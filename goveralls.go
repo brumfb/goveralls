@@ -290,6 +290,8 @@ func process() error {
 		os.Exit(1)
 	}
 
+	fmt.Println("--- brumfb/goveralls ---")
+
 	//
 	// Setup PATH environment variable
 	//
