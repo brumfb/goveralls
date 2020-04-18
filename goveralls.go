@@ -67,6 +67,7 @@ var (
 	show        = flag.Bool("show", false, "Show which package is being tested")
 	customJobID = flag.String("jobid", "", "Custom set job token")
 	jobNumber   = flag.String("jobnumber", "", "Custom set job number")
+	commitSHA   = flag.String("commitSHA", os.Getenv("VCS_COMMIT_ID"), "Commit ID to use if git info isn't available.")
 
 	parallelFinish = flag.Bool("parallel-finish", false, "finish parallel test")
 )
@@ -103,6 +104,7 @@ type Job struct {
 	Parallel           *bool         `json:"parallel,omitempty"`
 	Git                *Git          `json:"git,omitempty"`
 	RunAt              time.Time     `json:"run_at"`
+	CommitSHA          string        `json:"commit_sha,omitempty"`
 }
 
 // A Response is returned by the Coveralls.io API.
@@ -412,6 +414,11 @@ func process() error {
 		j.ServiceJobID = jobID
 	}
 	j.ServiceJobNumber = *jobNumber
+
+	// Override commit SHA
+	if *commitSHA != "" {
+		j.CommitSHA = *commitSHA
+	}
 
 	// Ignore files
 	if len(*ignore) > 0 {
